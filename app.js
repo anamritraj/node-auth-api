@@ -6,6 +6,11 @@ var jwt = require('jsonwebtoken');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
+// Include Schema
+var User = require('./mongodb/user-schema');
+var Token = require('./mongodb/token-schema');
+
+// Include Routes
 var routes = require('./routes/index');
 var api = require('./routes/api');
 var login = require('./routes/login');
