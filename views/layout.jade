@@ -2,6 +2,33 @@ doctype html
 html
   head
     title= title
-    link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel='stylesheet', href='/assets/css/default.css')
+    link(rel='stylesheet', href='/assets/css/bootstrap.min.css')
+    block css_includes
   body
+    nav(role="navigation").navbar.navbar-default
+        .container
+            .navbar-header
+                button(type="button", data-toggle="collapse", data-target=".navbar-ex1-collapse").navbar-toggle.collapsed
+                    span.sr-only Toggle navigation
+                    span.icon-bar
+                    span.icon-bar
+                    span.icon-bar
+                a(href="/" ).navbar-brand #{title}
+            .collapse.navbar-collapse.navbar-ex1-collapse
+                ul.nav.navbar-nav.navbar-right
+                    li: a(href="/") Home
+                    li: a(href="/login") Login
+                    li: a(href="/register") Register
+                    li.dropdown
+                        a.dropdown-toggle(href="#", data-toggle="dropdown",role="button", aria-expanded="false")
+                            | My Account 
+                            span.caret
+                        ul.dropdown-menu(role="menu")
+                            li: a(href="/tokens") Valid Tokens
+                            li: a(href="/logout") Logout
     block content
+    script(src="/assets/js/jquery.min.js")
+    script(src="/assets/js/bootstrap.min.js")
+    block js_includes
+

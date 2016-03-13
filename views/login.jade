@@ -1,0 +1,18 @@
+extends layout
+
+block content
+  .container
+    .col-md-6
+        form(action="/api/login", method="POST", role="form")
+            legend Login 
+            .form-group
+                label(for="") username/email
+                input.form-control(type="text", placeholder="Enter your email")
+            .form-group
+                label(for="") password
+                input.form-control(type="text", placeholder="password")
+            p Not a member? 
+                a(href="/register") Register
+            button.btn.btn-primary(type="submit") Sign In 
+        
+    
