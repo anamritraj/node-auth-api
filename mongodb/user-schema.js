@@ -1,4 +1,5 @@
 var Mongoose = require('./config');
+var bcrypt = require('bcrypt-nodejs');
 
 var Schema = Mongoose.Schema;
 
@@ -10,6 +11,21 @@ var UserSchema = new Schema({
   updated_on: Date
 });
 
+UserSchema.pre('save', function(next){
+    var user = this;
+    SALT_WORK_FACTOR = 10;
+
+    if (!user.isModified('password')) return next();
+
+    bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt){
+        if(err) return next(err);
+        bcrypt.hash(user.password, salt,null, function(err, hash){
+            if(err) return next(err);
+            user.password = hash;
+            next();
+        });
+    });
+});
 var User = Mongoose.model('User',UserSchema);
 
 // User.create({

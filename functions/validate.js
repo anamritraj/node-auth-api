@@ -28,7 +28,7 @@ validator.password = function(string){
 };
 
 /*
-Checks if the email is alredy registered. Returns true id alredy registered, false otherwise.
+Checks if the email is alredy registered. Returns true if alredy registered, false otherwise.
  */
 validator.userAlreadyRegistered = function(email){
 	User.findOne({ 'email': email }, 'email', function (err, person) {
@@ -40,6 +40,22 @@ validator.userAlreadyRegistered = function(email){
 	  }
 	});
 };
+
+/*
+Checks if the email and password combination is matching. Returns true if matches, false otherwise.
+ */
+validator.validateCredentials = function(email, password){
+	User.findOne({ 'email': email, 'password':password }, 'name', function (err, person) {
+	  if (err) return handleError(err);
+	  if (person) {
+	  	return true;
+	  }else{
+	  	return false;
+	  }
+	});
+};
+
+
 
 /*
 Returns current time
