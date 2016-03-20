@@ -3,17 +3,17 @@ extends layout
 block content
   .container
     .col-md-6
-        form(action="/api/register", method="POST", role="form")
+        form(action="/api/register", method="POST", enctype="application/x-www-form-urlencoded")
             legend Register
             .form-group
                 label(for="") Your Name
-                input.form-control(type="text", placeholder="Enter your name")
+                input.form-control(type="text", name="name", placeholder="Enter your name")
             .form-group
                 label(for="") Your email
-                input.form-control(type="email", placeholder="Enter your email")
+                input.form-control(type="email", name="email", placeholder="Enter your email")
             .form-group
                 label(for="") Choose a password
-                input.form-control(type="text", placeholder="password")
+                input.form-control(type="password",  name="password",placeholder="password")
             p Already a member? 
                 a(href="/login") Sign In
             button.btn.btn-primary(type="submit") Sign Up 
