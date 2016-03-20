@@ -27,18 +27,21 @@ router.post('/register', function(req, res, next) {
 		message.errors = [];
 	
 	// name validation
-	if(!validate.isAlpha(name)){
+	if(name.length < 1){
 		success = false;
 		message.errorFields.push('name');
 		message.errors.push('Name is not Valid');
-
 	}
+
 	//email validation
-	if (!validate.isEmail(email)) {
+	if (!validate.isEmail(email) || email.length < 5) {
 		success = false;
 		message.errorFields.push('email');
 		message.errors.push('Email is not Valid');
-
+	}else if (!validate.userAlreadyRegistered(email)) {
+		message.errorFields.push('email');
+		message.errors.push('Email is already registered');
+		
 	}
 	//password validation
 	validatePassword = validate.password(password);
@@ -50,7 +53,7 @@ router.post('/register', function(req, res, next) {
 	if (success === false) {
 		res.json({message:message, success:success});
 	}else{
-		// Insert the data in the database
+		// Inserting the data in the database
 		User.create({
 		  name:name,
 		  email: email,

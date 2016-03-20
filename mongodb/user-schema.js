@@ -3,9 +3,9 @@ var Mongoose = require('./config');
 var Schema = Mongoose.Schema;
 
 var UserSchema = new Schema({
-  name : String,
-  email: String,
-  password: String,
+  name : {type: String, required: true},
+  email: {type: String, required: true},
+  password: {type: String, required: true},
   added_on: Date,
   updated_on: Date
 });

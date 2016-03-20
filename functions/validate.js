@@ -1,11 +1,19 @@
 var validator = require('validator');
+var User = require('../mongodb/user-schema');
 
+/*
+Cleans the string for insertion in the database
+ */
 validator.clean = function(string){
 	string = validator.trim(string);
 	string = validator.escape(string);
+	string = validator.blacklist(string, '<\\\/>%');
 	return string;
 };
 
+/*
+Validates and returns clean password before insertion in the database
+ */
 validator.password = function(string){
 	string = validator.trim(string);
 	string = validator.escape(string);
@@ -19,6 +27,23 @@ validator.password = function(string){
 	return result;
 };
 
+/*
+Checks if the email is alredy registered. Returns true id alredy registered, false otherwise.
+ */
+validator.userAlreadyRegistered = function(email){
+	User.findOne({ 'email': email }, 'email', function (err, person) {
+	  if (err) return handleError(err);
+	  if (person) {
+	  	return true;
+	  }else{
+	  	return false;
+	  }
+	});
+};
+
+/*
+Returns current time
+ */
 validator.getCurrentTime = function(){
 	var d = new Date();
 	return d.getTime();
