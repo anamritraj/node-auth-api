@@ -1,4 +1,5 @@
 var validator = require('validator');
+var bcrypt = require('bcrypt-nodejs');
 var User = require('../mongodb/user-schema');
 
 /*
@@ -12,7 +13,7 @@ validator.clean = function(string){
 };
 
 /*
-Validates and returns clean password before insertion in the database
+Validates password before insertion in the database
  */
 validator.password = function(string){
 	string = validator.trim(string);
@@ -40,22 +41,6 @@ validator.userAlreadyRegistered = function(email){
 	  }
 	});
 };
-
-/*
-Checks if the email and password combination is matching. Returns true if matches, false otherwise.
- */
-validator.validateCredentials = function(email, password){
-	User.findOne({ 'email': email, 'password':password }, 'name', function (err, person) {
-	  if (err) return handleError(err);
-	  if (person) {
-	  	return true;
-	  }else{
-	  	return false;
-	  }
-	});
-};
-
-
 
 /*
 Returns current time

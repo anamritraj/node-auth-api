@@ -4,6 +4,7 @@ var Schema = Mongoose.Schema;
 
 var TokenSchema = new Schema({
   token : String,
+  email : String,
   added_on: Date
 });
 

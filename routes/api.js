@@ -1,6 +1,10 @@
 var express = require('express');
+var bcrypt = require('bcrypt-nodejs');
+var jwt = require('jsonwebtoken');
 var router = express.Router();
 
+var jwtsecret = process.env.JWT_SECRET_KEY;
+console.log(jwtsecret);
 // Include Validator (Our Custom Script)
 var validate = require('../functions/validate.js');
 
@@ -24,11 +28,7 @@ router.post('/login', function(req, res, next) {
 		success = false;
 		message.errorFields.push('email');
 		message.errors.push('Email is not Valid');
-	}else if (!validate.userAlreadyRegistered(email)) {
-		message.errorFields.push('email');
-		message.errors.push('Email is already registered');	
 	}
-
 	//password validation
 	validatePassword = validate.password(password);
 	if (!validatePassword.success) {
@@ -40,9 +40,55 @@ router.post('/login', function(req, res, next) {
 		res.json({message:message, success:success});
 	}else{
 		// Validate credentials and generate token
-		
+		User.findOne({ 'email': email}, 'password', function (err, person) {
+			var result = {};
+			if (err) {
+				result.success = false;
+				result.message = "An internal error occured!";
+				res.json({success: false, message:result.message});		
+			}else if(person) {
+			  	// User exits
+				bcrypt.compare(password, person.password, function(err, compareSuccess) {
+				    if (err) {
+				    	console.log(err);
+					  	result.success = false;
+					  	result.message = "An internal error occured!";
+						res.json({success: false, message:result.message});
+				    }else if(compareSuccess){
+					  	result.success = true;
+						////////////////////
+					  	// Generate token //
+						////////////////////
+						var token = jwt.sign({email: email}, jwtsecret,{
+					        expiresIn: 24 * 60 * 60// expires in 24 hours
+					    });
+					    Token.create({
+						  token: token,
+						  email: email,
+						  added_on: validate.getCurrentTime(),
+						  }, function(err, small){
+						  if(err) {
+							result.success = false;
+						  	result.message = "An internal error occured!";
+							res.json({success: false, message:result.message});
+						  }
+						  // Successfully inserted token in the database
+						  res.json({success: true, token:token});
+						});
+				    }else{
+				    	result.success = false;
+					  	result.message = "Incorrect Password";
+						res.json({success: false, message:result.message});
+				    }
+				});
+			}else{
+			  	// No user found
+		    	result.success = false;
+			  	result.message = "User does not exists";
+				res.json({success: false, message:result.message});
+			}
+		});
 	}
-	res.json({index : 'sdfsd'});
 });
 
 router.post('/register', function(req, res, next) {
@@ -104,8 +150,19 @@ router.post('/register', function(req, res, next) {
 });
 
 router.post('/logout', function(req, res, next) {
-	console.log(req.url);
-	res.json({index : 'sdfsd'});
+	// submit the token as post data or in the headers
+	var token = req.headers.token || req.body.token;
+	console.log(token);
+	Token.findOneAndRemove({ 'token': token}, 'email', function (err, deletedToken) {
+		if (err) {
+			res.json({success:false, message:err});
+		}
+		if (deletedToken) {
+			res.json({success:true, message:"Successfully deleted token for "+deletedToken.email});			
+		}else{
+			res.json({success:false, message:"Nothing found!"});
+		}
+	});
 });
 
 module.exports = router;
