@@ -4,6 +4,10 @@ var jwt = require('jsonwebtoken');
 var router = express.Router();
 
 var jwtsecret = process.env.JWT_SECRET_KEY;
+
+if (process.env.OPENSHIFT_SECRET_TOKEN) {
+	jwtsecret = process.env.OPENSHIFT_SECRET_TOKEN;
+}
 console.log(jwtsecret);
 // Include Validator (Our Custom Script)
 var validate = require('../functions/validate.js');
